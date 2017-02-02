@@ -5,9 +5,21 @@ class CreditCheck
   end
 
   def cc_check(card_number)
-    cc = card_number.reverse.split(//)
-    check_digit = cc.shift
-    cc.each_with_index do |num, index|
+    @card_number = card_number
+    split
+    check_digit = @cc.shift
+    credit_loop
+    @total = @doubled_every_other.reduce(:+) + check_digit.to_i
+    valid_or_invalid
+  end
+
+
+  def split
+    @cc = @card_number.reverse.split(//)
+  end
+
+  def credit_loop
+    @cc.each_with_index do |num, index|
       if index.even?
         num = num.to_i * 2
       else
@@ -15,20 +27,21 @@ class CreditCheck
       end
 
       if num > 9
-        if_two_digits = num.to_s.splits(//)
+        if_two_digits = num.to_s.split(//)
         num = if_two_digits[0].to_i + if_two_digits[1].to_i
       end
       @doubled_every_other << num
     end
+  end
 
-    sum = @doubled_every_other.reduce(:+)
-    total = sum + check_digit.to_i
-    if total % 10 == 0
+  def valid_or_invalid
+    if @total % 10 == 0
       p "The number is valid."
     else
       p "The number is invalid."
     end
   end
+
 end
 
 check = CreditCheck.new
